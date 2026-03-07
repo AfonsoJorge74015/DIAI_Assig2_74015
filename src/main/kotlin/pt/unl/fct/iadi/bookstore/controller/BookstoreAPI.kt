@@ -1,5 +1,6 @@
 package pt.unl.fct.iadi.bookstore.controller
 
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -8,53 +9,53 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import pt.unl.fct.iadi.bookstore.domain.Book
-import pt.unl.fct.iadi.bookstore.domain.Review
+import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
+import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 
 @RequestMapping("/bookstore")
 interface BookstoreAPI {
 
     //1
     @GetMapping("/books")
-    fun getBooks() : List<Book>
+    fun getBooks() : ResponseEntity<List<BookDTO>>
 
     //2
     @PostMapping("/books")
-    fun addBook(@RequestBody book: Book) : Book
+    fun addBook(@RequestBody bookDto: BookDTO) : ResponseEntity<BookDTO>
 
     //3
-    @GetMapping("/books/{id}")
-    fun getBook(@PathVariable id : String) : Book
+    @GetMapping("/books/{isbn}")
+    fun getBook(@PathVariable isbn : String) : ResponseEntity<BookDTO>
 
     //4
-    @PutMapping("/books/{id}")
-    fun upsertBook(@PathVariable id: String, @RequestBody book: Book) : Book
+    @PutMapping("/books/{isbn}")
+    fun updateBook(@PathVariable isbn: String, @RequestBody bookDto: BookDTO) : ResponseEntity<BookDTO>
 
     //5
-    @PatchMapping("/books/{id}")
-    fun patchBook(@PathVariable id: String, @RequestBody fields: Map<String, Any>) : Book
+    @PatchMapping("/books/{isbn}")
+    fun patchBook(@PathVariable isbn: String, @RequestBody fields: Map<String, Any>) : ResponseEntity<BookDTO>
 
     //6
-    @DeleteMapping("/books/{id}")
-    fun deleteBook(@PathVariable id: String)
+    @DeleteMapping("/books/{isbn}")
+    fun deleteBook(@PathVariable isbn: String) : ResponseEntity<Unit>
 
     //7
-    @GetMapping("/books/{id}/reviews")
-    fun getReviews(@PathVariable id: String) : List<Review>
+    @GetMapping("/books/{isbn}/reviews")
+    fun getReviews(@PathVariable isbn: String) : ResponseEntity<List<ReviewDTO>>
 
     //8
-    @PostMapping("/books/{id}/reviews")
-    fun addReview(@PathVariable id: String, @RequestBody review: Review) : Book
+    @PostMapping("/books/{isbn}/reviews")
+    fun addReview(@PathVariable isbn: String, @RequestBody reviewDto: ReviewDTO) : ResponseEntity<ReviewDTO>
 
     //9
-    @PutMapping("/books/{id}/reviews/{reviewId}")
-    fun upsertReview(@PathVariable id: String, @PathVariable reviewId: String, @RequestBody review: Review) : Book
+    @PutMapping("/books/{isbn}/reviews/{reviewId}")
+    fun updateReview(@PathVariable isbn: String, @PathVariable reviewId: String, @RequestBody reviewDto: ReviewDTO) : ResponseEntity<ReviewDTO>
 
     //10
-    @PatchMapping("/books/{id}/reviews/{reviewId}")
-    fun patchReview(@PathVariable id: String, @PathVariable reviewId: String, @RequestBody fields: Map<String, Any>) : Book
+    @PatchMapping("/books/{isbn}/reviews/{reviewId}")
+    fun patchReview(@PathVariable isbn: String, @PathVariable reviewId: String, @RequestBody fields: Map<String, Any>) : ResponseEntity<ReviewDTO>
 
     //11
-    @DeleteMapping("/books/{id}/reviews/{reviewId}")
-    fun deleteReview(@PathVariable id: String, @PathVariable reviewId: String)
+    @DeleteMapping("/books/{isbn}/reviews/{reviewId}")
+    fun deleteReview(@PathVariable isbn: String, @PathVariable reviewId: String): ResponseEntity<Unit>
 }

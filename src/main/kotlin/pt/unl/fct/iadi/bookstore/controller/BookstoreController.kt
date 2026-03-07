@@ -1,70 +1,98 @@
 package pt.unl.fct.iadi.bookstore.controller
 
-import pt.unl.fct.iadi.bookstore.domain.Book
-import pt.unl.fct.iadi.bookstore.domain.Review
+import net.bytebuddy.pool.TypePool
+import org.springframework.http.ResponseEntity
+import org.springframework.stereotype.Controller
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
+import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.service.BookstoreService
 
+@Controller
 class BookstoreController(
-    private val service: BookstoreService
-) : BookstoreAPI {
+    private val service: BookstoreService)
+    : BookstoreAPI {
 
-    override fun getBooks(): List<Book> = service.getBooks()
-
-    override fun addBook(book: Book): Book {
-        TODO("Not yet implemented")
+    //1
+    override fun getBooks(): ResponseEntity<List<BookDTO>> {
+        val result = service.getBooks()
+        return ResponseEntity.ok(result)
     }
 
-    override fun getBook(id: String): Book {
-        TODO("Not yet implemented")
+    //2
+    override fun addBook(bookDto: BookDTO): ResponseEntity<BookDTO> {
+        val created = service.createBook(bookDto)
+        val location = ServletUriComponentsBuilder
+            .fromCurrentRequest()
+            .path("/{isbn}")
+            .buildAndExpand(bookDto.isbn)
+            .toUri()
+        return ResponseEntity.created(location).body(created)
     }
 
-    override fun upsertBook(
-        id: String,
-        book: Book
-    ): Book {
-        TODO("Not yet implemented")
+    //3
+    override fun getBook(isbn: String): ResponseEntity<BookDTO> {
+        val result = service.getBook(isbn)
+        return ResponseEntity.ok(result)
     }
 
-    override fun patchBook(
-        id: String,
-        fields: Map<String, Any>
-    ): Book {
-        TODO("Not yet implemented")
+    //4
+    override fun updateBook(isbn: String, bookDto: BookDTO): ResponseEntity<BookDTO> {
+        val updated = service.updateBook(isbn, bookDto)
+        return ResponseEntity.ok(updated)
     }
 
-    override fun deleteBook(id: String) {
-        TODO("Not yet implemented")
+    //5
+    override fun patchBook(isbn: String, fields: Map<String, Any>): ResponseEntity<BookDTO> {
+        val patched = service.patchBook(isbn, fields)
+        return ResponseEntity.ok(patched)
+
     }
 
-    override fun getReviews(id: String): List<Review> {
-        TODO("Not yet implemented")
+    //6
+    override fun deleteBook(isbn: String) : ResponseEntity<Unit> {
+        service.deleteBook(isbn)
+        return ResponseEntity.noContent().build()
     }
 
-    override fun addReview(
-        id: String,
-        review: Review
-    ): Book {
-        TODO("Not yet implemented")
+    //7
+    override fun getReviews(isbn: String): ResponseEntity<List<ReviewDTO>> {
+        val reviews = service.getReviews(isbn)
+        return ResponseEntity.ok(reviews)
     }
 
-    override fun upsertReview(
-        id: String,
-        reviewId: String,
-        review: Review
-    ): Book {
-        TODO("Not yet implemented")
+    //8
+    override fun addReview(isbn: String, reviewDto: ReviewDTO)
+        : ResponseEntity<ReviewDTO> {
+        val review = service.addReview(isbn, reviewDto)
+        val location = ServletUriComponentsBuilder
+            .fromCurrentRequest()
+            .path("/{reviewId}")
+            .buildAndExpand(review.id)
+            .toUri()
+        return ResponseEntity.created(location).body(review)
     }
 
-    override fun patchReview(
-        id: String,
-        reviewId: String,
-        fields: Map<String, Any>
-    ): Book {
-        TODO("Not yet implemented")
+    //9
+    override fun updateReview(isbn: String, reviewId: String, reviewDto: ReviewDTO)
+        : ResponseEntity<ReviewDTO> {
+
+        val review = service.updateReview(isbn, reviewId, reviewDto)
+        return ResponseEntity.ok(review)
     }
 
-    override fun deleteReview(id: String, reviewId: String) {
-        TODO("Not yet implemented")
+    //10
+    override fun patchReview(isbn: String, reviewId: String, fields: Map<String, Any>)
+        : ResponseEntity<ReviewDTO> {
+
+        val review = service.patchReview(isbn, reviewId, fields)
+        return ResponseEntity.ok(review)
+    }
+
+    //11
+    override fun deleteReview(isbn: String, reviewId: String): ResponseEntity<Unit> {
+        service.deleteReview(isbn, reviewId)
+        return ResponseEntity.noContent().build()
     }
 
 

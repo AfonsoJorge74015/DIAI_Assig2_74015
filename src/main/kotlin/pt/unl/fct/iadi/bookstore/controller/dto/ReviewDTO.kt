@@ -1,4 +1,10 @@
 package pt.unl.fct.iadi.bookstore.controller.dto
 
-class ReviewDTO {
+import java.util.UUID
+
+data class ReviewDTO(
+    val id: UUID,
+    val rating: Int,
+    val comment: String?
+) {
 }
