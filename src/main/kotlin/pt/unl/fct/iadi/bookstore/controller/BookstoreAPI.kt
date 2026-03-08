@@ -30,8 +30,10 @@ interface BookstoreAPI {
     @Operation(summary = "Create a new book", description = "Adds a new book to the store. Fails if the ISBN already exists.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "201", description = "Book successfully created"),
-        ApiResponse(responseCode = "400", description = "Validation error (e.g., negative price)", content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
-        ApiResponse(responseCode = "409", description = "Conflict: A book with this ISBN already exists", content = [Content(schema = Schema(implementation = ErrorResponse::class))])
+        ApiResponse(responseCode = "400", description = "Validation error (e.g., negative price)",
+            content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
+        ApiResponse(responseCode = "409", description = "Conflict: A book with this ISBN already exists",
+            content = [Content(schema = Schema(implementation = ErrorResponse::class))])
     ])
     @PostMapping("/books")
     fun addBook(@RequestBody bookDto: BookDTO) : ResponseEntity<BookDTO>
@@ -39,7 +41,9 @@ interface BookstoreAPI {
     //3
     @Operation(summary = "Get a specific book", description = "Retrieves a book's details by its ISBN.")
     @ApiResponses(value = [
-        ApiResponse(responseCode = "200", description = "Book found", content = [Content(schema = Schema(implementation = BookDTO::class))]),
+        ApiResponse(responseCode = "200", description = "Book found", content = [Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = BookDTO::class))]),
         ApiResponse(responseCode = "404", description = "Book not found", content = [Content(schema = Schema(implementation = ErrorResponse::class))])
     ])
     @GetMapping("/books/{isbn}")
