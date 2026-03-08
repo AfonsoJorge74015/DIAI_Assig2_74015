@@ -1,5 +1,7 @@
 package pt.unl.fct.iadi.bookstore.controller
 
+import org.springframework.context.i18n.LocaleContextHolder
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -30,10 +32,22 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(BookstoreExceptions.NotFoundException::class)
     fun handleNotFound(e: BookstoreExceptions.NotFoundException): ResponseEntity<ErrorResponse> {
+        val locale = LocaleContextHolder.getLocale()
+
+        // US3: Support localized messages (simple implementation)
+        val message = if (locale.language == "pt") {
+            "${e.message?.substringBefore(" ")} não encontrado"
+        } else {
+            e.message ?: "Item not found"
+        }
+
         val response = ErrorResponse(
             error = "NOT_FOUND",
-            message = e.message ?: "Item not found"
+            message = message
         )
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response)
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .header(HttpHeaders.CONTENT_LANGUAGE, locale.language) // US3 Requirement
+            .body(response)
     }
 }
