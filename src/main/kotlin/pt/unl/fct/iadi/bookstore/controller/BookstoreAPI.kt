@@ -20,7 +20,6 @@ import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.utils.ErrorResponse
 
 @Tag(name = "Bookstore", description = "Operations related to books and reviews")
-//@RequestMapping("/bookstore")
 interface BookstoreAPI {
 
     //1
@@ -40,8 +39,16 @@ interface BookstoreAPI {
     //3
     @Operation(summary = "Get a specific book", description = "Retrieves a book's details by its ISBN.")
     @ApiResponses(value = [
-        ApiResponse(responseCode = "200", description = "Book found"),
-        ApiResponse(responseCode = "404", description = "Book not found", content = [Content(schema = Schema(implementation = ErrorResponse::class))])
+        ApiResponse(
+            responseCode = "200",
+            description = "Book found",
+            content = [Content(schema = Schema(implementation = BookDTO::class))] // Fix: Explicitly add the schema
+        ),
+        ApiResponse(
+            responseCode = "404",
+            description = "Book not found",
+            content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+        )
     ])
     @GetMapping("/books/{isbn}")
     fun getBook(@PathVariable isbn : String) : ResponseEntity<BookDTO>
