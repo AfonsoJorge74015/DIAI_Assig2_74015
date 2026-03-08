@@ -1,13 +1,11 @@
 package pt.unl.fct.iadi.bookstore.controller
 
-import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.service.BookstoreService
-import java.util.Locale
 
 @RestController
 class BookstoreController(
@@ -32,11 +30,9 @@ class BookstoreController(
     }
 
     //3
-    override fun getBook(isbn: String, locale: Locale): ResponseEntity<BookDTO> {
+    override fun getBook(isbn: String): ResponseEntity<BookDTO> {
         val result = service.getBook(isbn)
-        return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_LANGUAGE, locale.language)
-            .body(result)
+        return ResponseEntity.ok(result)
     }
 
     //4
