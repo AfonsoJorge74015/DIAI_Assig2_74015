@@ -20,7 +20,7 @@ import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.utils.ErrorResponse
 
 @Tag(name = "Bookstore", description = "Operations related to books and reviews")
-@RequestMapping("/bookstore")
+//@RequestMapping("/bookstore")
 interface BookstoreAPI {
 
     //1

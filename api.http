@@ -1,5 +1,5 @@
 ### Global Variables
-@host = http://localhost:8080/bookstore
+@host = http://localhost:8080
 @isbn = 9780134685991
 @invalid_isbn = 0000000000000
 
