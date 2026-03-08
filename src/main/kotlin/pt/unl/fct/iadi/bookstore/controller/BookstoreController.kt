@@ -1,13 +1,13 @@
 package pt.unl.fct.iadi.bookstore.controller
 
 import org.springframework.http.ResponseEntity
-import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.service.BookstoreService
 
-@Controller
+@RestController
 class BookstoreController(
     private val service: BookstoreService)
     : BookstoreAPI {
