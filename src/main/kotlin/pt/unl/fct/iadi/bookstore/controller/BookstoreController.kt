@@ -1,5 +1,6 @@
 package pt.unl.fct.iadi.bookstore.controller
 
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
@@ -19,14 +20,14 @@ class BookstoreController(
     }
 
     //2
-    override fun addBook(bookDto: BookDTO): ResponseEntity<BookDTO> {
-        val created = service.createBook(bookDto)
+    override fun addBook(bookDto: BookDTO): ResponseEntity<Unit> {
+        service.createBook(bookDto)
         val location = ServletUriComponentsBuilder
             .fromCurrentRequest()
             .path("/{isbn}")
             .buildAndExpand(bookDto.isbn)
             .toUri()
-        return ResponseEntity.created(location).body(created)
+        return ResponseEntity.created(location).build()
     }
 
     //3
@@ -36,16 +37,18 @@ class BookstoreController(
     }
 
     //4
-    override fun updateBook(isbn: String, bookDto: BookDTO): ResponseEntity<BookDTO> {
-        val updated = service.updateBook(isbn, bookDto)
-        return ResponseEntity.ok(updated)
+    override fun updateBook(isbn: String, bookDto: BookDTO): ResponseEntity<Unit> {
+        if(isbn != bookDto.isbn){
+            throw IllegalArgumentException("Mismatching isbn")
+        }
+        service.updateBook(isbn, bookDto)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
     //5
-    override fun patchBook(isbn: String, fields: Map<String, Any>): ResponseEntity<BookDTO> {
-        val patched = service.patchBook(isbn, fields)
-        return ResponseEntity.ok(patched)
-
+    override fun patchBook(isbn: String, fields: Map<String, Any>): ResponseEntity<Unit> {
+        service.patchBook(isbn, fields)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
     //6
@@ -62,30 +65,30 @@ class BookstoreController(
 
     //8
     override fun addReview(isbn: String, reviewDto: ReviewDTO)
-        : ResponseEntity<ReviewDTO> {
+        : ResponseEntity<Unit> {
         val review = service.addReview(isbn, reviewDto)
         val location = ServletUriComponentsBuilder
             .fromCurrentRequest()
             .path("/{reviewId}")
             .buildAndExpand(review.id)
             .toUri()
-        return ResponseEntity.created(location).body(review)
+        return ResponseEntity.created(location).build()
     }
 
     //9
     override fun updateReview(isbn: String, reviewId: String, reviewDto: ReviewDTO)
-        : ResponseEntity<ReviewDTO> {
+        : ResponseEntity<Unit> {
 
-        val review = service.updateReview(isbn, reviewId, reviewDto)
-        return ResponseEntity.ok(review)
+        service.updateReview(isbn, reviewId, reviewDto)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
     //10
     override fun patchReview(isbn: String, reviewId: String, fields: Map<String, Any>)
-        : ResponseEntity<ReviewDTO> {
+        : ResponseEntity<Unit> {
 
-        val review = service.patchReview(isbn, reviewId, fields)
-        return ResponseEntity.ok(review)
+        service.patchReview(isbn, reviewId, fields)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
     //11

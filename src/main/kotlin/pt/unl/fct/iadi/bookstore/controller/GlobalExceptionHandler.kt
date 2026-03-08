@@ -1,14 +1,20 @@
 package pt.unl.fct.iadi.bookstore.controller
 
+import org.springframework.context.MessageSource
+import org.springframework.context.i18n.LocaleContextHolder
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import pt.unl.fct.iadi.bookstore.service.exceptions.BookstoreExceptions
 import pt.unl.fct.iadi.bookstore.utils.ErrorResponse
+import java.util.Locale
 
 @RestControllerAdvice
-class GlobalExceptionHandler {
+class GlobalExceptionHandler(
+    private val messageSource: MessageSource
+) {
 
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleValidation(e: IllegalArgumentException): ResponseEntity<ErrorResponse> {
@@ -30,10 +36,24 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(BookstoreExceptions.NotFoundException::class)
     fun handleNotFound(e: BookstoreExceptions.NotFoundException): ResponseEntity<ErrorResponse> {
+        val locale = LocaleContextHolder.getLocale()
+
+        val targetLocale = if (locale.language == "pt") {
+            Locale.forLanguageTag("pt")
+        } else {
+            Locale.ENGLISH
+        }
+
+        val locMessage = messageSource.getMessage("error.notfound",
+            null, "Item not found",targetLocale)
+
         val response = ErrorResponse(
             error = "NOT_FOUND",
-            message = e.message ?: "Item not found"
+            message = locMessage!!
         )
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response)
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .header(HttpHeaders.CONTENT_LANGUAGE, locale.language)
+            .body(response)
     }
 }

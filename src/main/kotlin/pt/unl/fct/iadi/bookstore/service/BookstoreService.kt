@@ -28,13 +28,12 @@ class BookstoreService(
     }
 
     //2
-    fun createBook(bookDto: BookDTO): BookDTO {
+    fun createBook(bookDto: BookDTO) {
         if(books.containsKey(bookDto.isbn)){
             throw BookstoreExceptions.AlreadyExistsException(bookDto.isbn)
         }
         books[bookDto.isbn] = mappers.dtoToBook(bookDto)
         reviews[bookDto.isbn] = mutableListOf()
-        return bookDto
     }
 
     //3
@@ -44,17 +43,16 @@ class BookstoreService(
     }
 
     //4
-    fun updateBook(isbn: String, bookDto: BookDTO): BookDTO {
+    fun updateBook(isbn: String, bookDto: BookDTO) {
         if(books.containsKey(isbn)){
             books[isbn] = mappers.dtoToBook(bookDto)
-            return bookDto
         } else {
-            return createBook(bookDto)
+            createBook(bookDto)
         }
     }
 
     //5
-    fun patchBook(isbn: String, fields: Map<String, Any>): BookDTO {
+    fun patchBook(isbn: String, fields: Map<String, Any>) {
         val toPatch = books[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
 
         val patched = toPatch.copy(
@@ -73,7 +71,6 @@ class BookstoreService(
         )
 
         books[isbn] = validated
-        return mappers.bookToDto(validated)
     }
 
     //6
@@ -90,7 +87,8 @@ class BookstoreService(
     }
 
     //8
-    fun addReview(isbn: String, reviewDto: ReviewDTO): ReviewDTO {
+    fun addReview(isbn: String, reviewDto: ReviewDTO)
+        : ReviewDTO {
         val book = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
         val review = mappers.dtoToReview(reviewDto)
         book.add(review)
@@ -99,8 +97,7 @@ class BookstoreService(
     }
 
     //9
-    fun updateReview(isbn: String, reviewId: String, reviewDto: ReviewDTO)
-        : ReviewDTO {
+    fun updateReview(isbn: String, reviewId: String, reviewDto: ReviewDTO) {
 
         val reviews = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
         val targetReview = UUID.fromString(reviewId)
@@ -110,12 +107,10 @@ class BookstoreService(
             throw BookstoreExceptions.NotFoundException(reviewId)
 
         reviews[index] = mappers.dtoToReview(reviewDto)
-        return mappers.reviewToDto(reviews[index])
     }
 
     //10
-    fun patchReview(isbn: String, reviewId: String, fields: Map<String, Any>)
-        : ReviewDTO {
+    fun patchReview(isbn: String, reviewId: String, fields: Map<String, Any>) {
 
         val reviews = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
         val targetReview = UUID.fromString(reviewId)
@@ -135,7 +130,6 @@ class BookstoreService(
             comment = patched.comment)
 
         reviews[index] = validated
-        return mappers.reviewToDto(validated)
     }
 
     //11
