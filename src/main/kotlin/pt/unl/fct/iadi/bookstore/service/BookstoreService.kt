@@ -1,6 +1,5 @@
 package pt.unl.fct.iadi.bookstore.service
 
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
@@ -61,7 +60,7 @@ class BookstoreService(
         val patched = toPatch.copy(
             title = fields["title"] as? String ?: toPatch.title,
             author = fields["author"] as? String ?: toPatch.author,
-            price = fields["price"] as? Double ?: toPatch.price,
+            price = fields["price"]?.toString()?.toDoubleOrNull() ?: toPatch.price,
             image = fields["image"] as? String ?: toPatch.image,
         )
 
@@ -93,9 +92,10 @@ class BookstoreService(
     //8
     fun addReview(isbn: String, reviewDto: ReviewDTO): ReviewDTO {
         val book = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
-        book.add(mappers.dtoToReview(reviewDto))
+        val review = mappers.dtoToReview(reviewDto)
+        book.add(review)
         reviews[isbn] = book
-        return reviewDto
+        return mappers.reviewToDto(review)
     }
 
     //9
@@ -110,7 +110,7 @@ class BookstoreService(
             throw BookstoreExceptions.NotFoundException(reviewId)
 
         reviews[index] = mappers.dtoToReview(reviewDto)
-        return reviewDto
+        return mappers.reviewToDto(reviews[index])
     }
 
     //10
@@ -127,7 +127,7 @@ class BookstoreService(
         val toPatch = reviews[index]
 
         val patched = toPatch.copy(
-            rating = fields["rating"] as? Int ?: toPatch.rating,
+            rating = fields["rating"]?.toString()?.toIntOrNull() ?: toPatch.rating,
             comment = fields["comment"] as? String ?: toPatch.comment)
 
         val validated = Review(

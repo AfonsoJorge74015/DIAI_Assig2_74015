@@ -1,6 +1,5 @@
 package pt.unl.fct.iadi.bookstore.controller
 
-import net.bytebuddy.pool.TypePool
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
