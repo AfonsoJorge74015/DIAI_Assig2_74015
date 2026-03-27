@@ -13,10 +13,9 @@ data class ReviewDTO(
         example = "550e8400-e29b-41d4-a716-446655440000", accessMode = Schema.AccessMode.READ_ONLY)
     val id: String?,
 
-    @field:NotBlank
     @field:Size(min = 1, max = 50, message = "The review author name must be between 1 and 50 characters")
     @field:Schema(description = "The name of the author of the review", example = "John Smith")
-    val author: String,
+    val author: String?,
 
     @field:NotNull(message = "Rating must be provided")
     @field:Min(value = 1, message = "Rating must be between 1 and 5")

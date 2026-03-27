@@ -32,9 +32,9 @@ class Mappers {
             bookDTO.price,
             bookDTO.image)
 
-    fun dtoToReview(reviewDto: ReviewDTO) =
+    fun dtoToReview(reviewDto: ReviewDTO, author: String) =
         Review(
-            author = reviewDto.author,
+            author = author,
             rating = reviewDto.rating,
             comment = reviewDto.comment)
 }

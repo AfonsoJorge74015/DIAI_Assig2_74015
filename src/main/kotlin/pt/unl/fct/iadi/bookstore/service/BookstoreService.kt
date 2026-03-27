@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolationException
 import org.springframework.stereotype.Service
 import jakarta.validation.Validator
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.domain.Book
@@ -99,15 +100,16 @@ class BookstoreService(
     }
 
     fun addReview(isbn: String, reviewDto: ReviewDTO): ReviewDTO {
+        val currUsername = SecurityContextHolder.getContext().authentication.name
         val book = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
-        val review = mappers.dtoToReview(reviewDto)
+        val review = mappers.dtoToReview(reviewDto, currUsername)
         book.add(review)
         reviews[isbn] = book
         return mappers.reviewToDto(review)
     }
 
     fun updateReview(isbn: String, reviewId: String, reviewDto: ReviewDTO) {
-
+        val currUsername = SecurityContextHolder.getContext().authentication.name
         val reviews = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
         val targetReview = UUID.fromString(reviewId)
         val index = reviews.indexOfFirst{ it.id == targetReview }
@@ -115,10 +117,11 @@ class BookstoreService(
         if(index == -1)
             throw BookstoreExceptions.NotFoundException(reviewId)
 
-        reviews[index] = mappers.dtoToReview(reviewDto)
+        reviews[index] = mappers.dtoToReview(reviewDto, currUsername)
     }
 
     fun patchReview(isbn: String, reviewId: String, fields: Map<String, Any>) {
+        val currUsername = SecurityContextHolder.getContext().authentication.name
         val reviews = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
         val targetReview = UUID.fromString(reviewId)
         val index = reviews.indexOfFirst { it.id == targetReview }
@@ -140,7 +143,7 @@ class BookstoreService(
             throw ConstraintViolationException(check)
         }
 
-        reviews[index] = mappers.dtoToReview(patchedDto)
+        reviews[index] = mappers.dtoToReview(patchedDto, currUsername)
     }
 
     fun deleteReview(isbn: String, reviewId: String) {
