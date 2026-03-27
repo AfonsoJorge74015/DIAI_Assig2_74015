@@ -1,7 +1,7 @@
 package pt.unl.fct.iadi.bookstore.service
 
 import org.springframework.stereotype.Service
-import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
+import pt.unl.fct.iadi.bookstore.controller.dto.CreateBookRequest
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.domain.Book
 import pt.unl.fct.iadi.bookstore.domain.Review
@@ -22,32 +22,32 @@ class BookstoreService(
     private val reviews = ConcurrentHashMap<String, MutableList<Review>>()
 
     //1
-    fun getBooks() : List<BookDTO> {
+    fun getBooks() : List<CreateBookRequest> {
         return books.values.toList()
             .map { mappers.bookToDto(it) }
     }
 
     //2
-    fun createBook(bookDto: BookDTO) {
-        if(books.containsKey(bookDto.isbn)){
-            throw BookstoreExceptions.AlreadyExistsException(bookDto.isbn)
+    fun createBook(createBookRequest: CreateBookRequest) {
+        if(books.containsKey(createBookRequest.isbn)){
+            throw BookstoreExceptions.AlreadyExistsException(createBookRequest.isbn)
         }
-        books[bookDto.isbn] = mappers.dtoToBook(bookDto)
-        reviews[bookDto.isbn] = mutableListOf()
+        books[createBookRequest.isbn] = mappers.dtoToBook(createBookRequest)
+        reviews[createBookRequest.isbn] = mutableListOf()
     }
 
     //3
-    fun getBook(isbn: String): BookDTO {
+    fun getBook(isbn: String): CreateBookRequest {
         val bookDto = books[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
         return mappers.bookToDto(bookDto)
     }
 
     //4
-    fun updateBook(isbn: String, bookDto: BookDTO) {
+    fun updateBook(isbn: String, createBookRequest: CreateBookRequest) {
         if(books.containsKey(isbn)){
-            books[isbn] = mappers.dtoToBook(bookDto)
+            books[isbn] = mappers.dtoToBook(createBookRequest)
         } else {
-            createBook(bookDto)
+            createBook(createBookRequest)
         }
     }
 
@@ -122,10 +122,12 @@ class BookstoreService(
         val toPatch = reviews[index]
 
         val patched = toPatch.copy(
+            author = fields["author"] as? String ?: toPatch.author,
             rating = fields["rating"]?.toString()?.toIntOrNull() ?: toPatch.rating,
             comment = fields["comment"] as? String ?: toPatch.comment)
 
         val validated = Review(
+            author = patched.author,
             rating = patched.rating,
             comment = patched.comment)
 
@@ -144,5 +146,12 @@ class BookstoreService(
         } else {
             throw BookstoreExceptions.NotFoundException(reviewId)
         }
+    }
+
+    //security helpers
+    fun checkReviewAuthor(isbn: String, reviewId: String, username: String): Boolean {
+        val bookReviews = reviews[isbn] ?: return false
+        val review = bookReviews.find { it.id == UUID.fromString(reviewId) } ?: return false
+        return review.author == username
     }
 }

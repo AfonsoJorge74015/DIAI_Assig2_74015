@@ -6,7 +6,9 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.annotation.security.RolesAllowed
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -14,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
-import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
+import pt.unl.fct.iadi.bookstore.controller.dto.CreateBookRequest
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.utils.ErrorResponse
 
@@ -24,7 +26,7 @@ interface BookstoreAPI {
     //1
     @Operation(summary = "Get all books", description = "Returns a list of all books currently in the store.")
     @GetMapping("/books")
-    fun getBooks() : ResponseEntity<List<BookDTO>>
+    fun getBooks() : ResponseEntity<List<CreateBookRequest>>
 
     //2
     @Operation(summary = "Create a new book", description = "Adds a new book to the store. Fails if the ISBN already exists.")
@@ -36,19 +38,19 @@ interface BookstoreAPI {
             content = [Content(schema = Schema(implementation = ErrorResponse::class))])
     ])
     @PostMapping("/books")
-    fun addBook(@RequestBody bookDto: BookDTO) : ResponseEntity<Unit>
+    fun addBook(@RequestBody createBookRequest: CreateBookRequest) : ResponseEntity<Unit>
 
     //3
     @Operation(summary = "Get a specific book", description = "Retrieves a book's details by its ISBN.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "Book found", content = [Content(
             mediaType = "application/json",
-            schema = Schema(implementation = BookDTO::class))]),
+            schema = Schema(implementation = CreateBookRequest::class))]),
         ApiResponse(responseCode = "404", description = "Book not found", content = [Content(
             schema = Schema(implementation = ErrorResponse::class))])
     ])
     @GetMapping("/books/{isbn}")
-    fun getBook(@PathVariable isbn : String) : ResponseEntity<BookDTO>
+    fun getBook(@PathVariable isbn : String) : ResponseEntity<CreateBookRequest>
 
     //4
     @Operation(summary = "Replace or create a book", description = "Fully replaces a book's info. If  doesn't exist, creates the book.")
@@ -59,7 +61,7 @@ interface BookstoreAPI {
             schema = Schema(implementation = ErrorResponse::class))])
     ])
     @PutMapping("/books/{isbn}")
-    fun updateBook(@PathVariable isbn: String, @RequestBody bookDto: BookDTO) : ResponseEntity<Unit>
+    fun updateBook(@PathVariable isbn: String, @RequestBody createBookRequest: CreateBookRequest) : ResponseEntity<Unit>
 
     //5
     @Operation(summary = "Partially update a book", description = "Updates only the provided fields of a book.")
@@ -81,6 +83,7 @@ interface BookstoreAPI {
             schema = Schema(implementation = ErrorResponse::class))])
     ])
     @DeleteMapping("/books/{isbn}")
+    @RolesAllowed("ADMIN")
     fun deleteBook(@PathVariable isbn: String) : ResponseEntity<Unit>
 
     //7
@@ -115,6 +118,7 @@ interface BookstoreAPI {
             schema = Schema(implementation = ErrorResponse::class))])
     ])
     @PutMapping("/books/{isbn}/reviews/{reviewId}")
+    @PreAuthorize("@bookstoreService.checkReviewAuthor(#isbn, #reviewId, authentication.name)")
     fun updateReview(@PathVariable isbn: String, @PathVariable reviewId: String, @RequestBody reviewDto: ReviewDTO) : ResponseEntity<Unit>
 
     //10
@@ -127,6 +131,7 @@ interface BookstoreAPI {
             schema = Schema(implementation = ErrorResponse::class))])
     ])
     @PatchMapping("/books/{isbn}/reviews/{reviewId}")
+    @PreAuthorize("@bookstoreService.checkReviewAuthor(#isbn, #reviewId, authentication.name)")
     fun patchReview(@PathVariable isbn: String, @PathVariable reviewId: String, @RequestBody fields: Map<String, Any>) : ResponseEntity<Unit>
 
     //11
