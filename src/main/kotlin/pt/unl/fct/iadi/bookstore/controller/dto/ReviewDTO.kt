@@ -1,6 +1,8 @@
 package pt.unl.fct.iadi.bookstore.controller.dto
 
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.constraints.Max
+import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
@@ -16,8 +18,9 @@ data class ReviewDTO(
     @field:Schema(description = "The name of the author of the review", example = "John Smith")
     val author: String,
 
-    @field:NotBlank
-    @field:Size(min = 1, max = 5, message = "Rating must be between 1 and 5")
+    @field:NotNull(message = "Rating must be provided")
+    @field:Min(value = 1, message = "Rating must be between 1 and 5")
+    @field:Max(value = 5, message = "Rating must be between 1 and 5")
     @field:Schema(description = "Rating from 1 to 5",
         minimum = "1", maximum = "5", example = "5")
     val rating: Int,
