@@ -42,7 +42,7 @@ class BookstoreController(
             throw IllegalArgumentException("Mismatching isbn")
         }
         service.updateBook(isbn, bookDTO)
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+        return ResponseEntity.status(HttpStatus.OK).build()
     }
 
     //5
