@@ -1,5 +1,6 @@
 package pt.unl.fct.iadi.bookstore.controller
 
+import jakarta.validation.ConstraintViolationException
 import org.springframework.context.MessageSource
 import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.http.HttpHeaders
@@ -32,6 +33,15 @@ class GlobalExceptionHandler(
             message = e.message ?: "Item already exists"
         )
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response)
+    }
+
+    @ExceptionHandler(ConstraintViolationException::class)
+    fun handleConstraintViolation(e: ConstraintViolationException): ResponseEntity<ErrorResponse> {
+        val response = ErrorResponse(
+            error = "BAD_REQUEST",
+            message = e.message ?: "Validation error",
+        )
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response)
     }
 
     @ExceptionHandler(BookstoreExceptions.NotFoundException::class)

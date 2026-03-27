@@ -1,6 +1,8 @@
 package pt.unl.fct.iadi.bookstore.service
 
+import jakarta.validation.ConstraintViolationException
 import org.springframework.stereotype.Service
+import jakarta.validation.Validator
 import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.domain.Book
@@ -14,6 +16,7 @@ import kotlin.collections.indexOfFirst
 @Service
 class BookstoreService(
     private val mappers: Mappers,
+    private val validator: Validator
 ) {
     //books = isbn -> book
     private val books = ConcurrentHashMap<String, Book>()
@@ -63,16 +66,15 @@ class BookstoreService(
             image = fields["image"] as? String ?: toPatch.image,
         )
 
-        val validated = Book(
-            isbn,
-            patched.title,
-            patched.author,
-            patched.price,
-            patched.image
-        )
+        val patchedDto = mappers.bookToDto(patched)
+        val check = validator.validate(patchedDto)
 
-        books[isbn] = validated
-        return mappers.bookToDto(validated)
+        if (check.isNotEmpty()) {
+            throw ConstraintViolationException(check)
+        }
+
+        books[isbn] = mappers.dtoToBook(patchedDto)
+        return patchedDto
     }
 
     //6
@@ -113,7 +115,6 @@ class BookstoreService(
 
     //10
     fun patchReview(isbn: String, reviewId: String, fields: Map<String, Any>) {
-
         val reviews = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
         val targetReview = UUID.fromString(reviewId)
         val index = reviews.indexOfFirst { it.id == targetReview }
@@ -128,12 +129,14 @@ class BookstoreService(
             rating = fields["rating"]?.toString()?.toIntOrNull() ?: toPatch.rating,
             comment = fields["comment"] as? String ?: toPatch.comment)
 
-        val validated = Review(
-            author = patched.author,
-            rating = patched.rating,
-            comment = patched.comment)
+        val patchedDto = mappers.reviewToDto(patched)
+        val check = validator.validate(patchedDto)
 
-        reviews[index] = validated
+        if (check.isNotEmpty()) {
+            throw ConstraintViolationException(check)
+        }
+
+        reviews[index] = mappers.dtoToReview(patchedDto)
     }
 
     //11
