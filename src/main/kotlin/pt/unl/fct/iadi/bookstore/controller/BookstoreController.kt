@@ -66,8 +66,7 @@ class BookstoreController(
         return ResponseEntity.ok(review)
     }
 
-    override fun addReview(isbn: String, reviewDto: ReviewDTO)
-        : ResponseEntity<Unit> {
+    override fun addReview(isbn: String, reviewDto: ReviewDTO): ResponseEntity<Unit> {
         val review = service.addReview(isbn, reviewDto)
         val location = ServletUriComponentsBuilder
             .fromCurrentRequest()

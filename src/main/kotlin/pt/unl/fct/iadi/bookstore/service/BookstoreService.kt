@@ -100,8 +100,8 @@ class BookstoreService(
     }
 
     fun addReview(isbn: String, reviewDto: ReviewDTO): ReviewDTO {
-        val currUsername = SecurityContextHolder.getContext().authentication.name
         val book = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
+        val currUsername = SecurityContextHolder.getContext().authentication.name
         val review = mappers.dtoToReview(reviewDto, currUsername)
         book.add(review)
         reviews[isbn] = book
