@@ -18,7 +18,7 @@ class Mappers {
             book.image)
 
     fun reviewToDto(review: Review) =
-        ReviewDTO(review.id.toString(),
+        ReviewDTO(review.id,
             review.author,
             review.rating,
             review.comment)
@@ -32,8 +32,9 @@ class Mappers {
             bookDTO.price,
             bookDTO.image)
 
-    fun dtoToReview(reviewDto: ReviewDTO, author: String) =
+    fun dtoToReview(reviewDto: ReviewDTO, author: String, currId: Long) =
         Review(
+            id = currId,
             author = author,
             rating = reviewDto.rating,
             comment = reviewDto.comment)
