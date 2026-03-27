@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
+import pt.unl.fct.iadi.bookstore.domain.Book
 import pt.unl.fct.iadi.bookstore.service.BookstoreService
 
 @RestController
@@ -37,7 +38,7 @@ class BookstoreController(
     }
 
     //4
-    override fun updateBook(isbn: String, bookDTO: BookDTO): ResponseEntity<Unit> {
+    override fun updateBook(isbn: String, bookDTO: BookDTO): ResponseEntity<BookDTO> {
         if(isbn != bookDTO.isbn){
             throw IllegalArgumentException("Mismatching isbn")
         }

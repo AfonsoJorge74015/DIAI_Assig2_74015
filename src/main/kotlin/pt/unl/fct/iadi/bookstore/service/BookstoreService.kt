@@ -43,12 +43,13 @@ class BookstoreService(
     }
 
     //4
-    fun updateBook(isbn: String, bookDTO: BookDTO) {
+    fun updateBook(isbn: String, bookDTO: BookDTO): BookDTO{
         if(books.containsKey(isbn)){
             books[isbn] = mappers.dtoToBook(bookDTO)
         } else {
             createBook(bookDTO)
         }
+        return bookDTO
     }
 
     //5

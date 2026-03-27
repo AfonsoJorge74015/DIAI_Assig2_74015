@@ -62,7 +62,7 @@ interface BookstoreAPI {
             schema = Schema(implementation = ErrorResponse::class))])
     ])
     @PutMapping("/books/{isbn}")
-    fun updateBook(@PathVariable isbn: String, @Valid @RequestBody bookDTO: BookDTO) : ResponseEntity<Unit>
+    fun updateBook(@PathVariable isbn: String, @Valid @RequestBody bookDTO: BookDTO) : ResponseEntity<BookDTO>
 
     //5
     @Operation(summary = "Partially update a book", description = "Updates only the provided fields of a book.")
