@@ -32,6 +32,6 @@ class ApiTokenFilter(
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         val path = request.requestURI
-        return path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || request.method == "DELETE"
+        return path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
     }
 }

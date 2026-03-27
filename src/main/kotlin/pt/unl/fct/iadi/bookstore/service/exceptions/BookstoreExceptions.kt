@@ -4,10 +4,10 @@ sealed class BookstoreExceptions(
     message: String,
 ) : RuntimeException(message) {
 
-    class AlreadyExistsException(isbn: String)
-        : BookstoreExceptions("$isbn already exists")
+    class AlreadyExistsException(itemId: String)
+        : BookstoreExceptions("$itemId already exists")
 
-    class NotFoundException(isbn: String)
-        : BookstoreExceptions("$isbn not found")
+    class NotFoundException(itemId: String)
+        : BookstoreExceptions("$itemId not found")
 
 }

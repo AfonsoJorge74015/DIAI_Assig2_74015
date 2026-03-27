@@ -3,6 +3,7 @@ package pt.unl.fct.iadi.bookstore.service
 import jakarta.validation.ConstraintViolationException
 import org.springframework.stereotype.Service
 import jakarta.validation.Validator
+import org.springframework.http.ResponseEntity
 import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.domain.Book
@@ -90,9 +91,14 @@ class BookstoreService(
         return reviews.map { mappers.reviewToDto(it) }
     }
 
-    //8
-    fun addReview(isbn: String, reviewDto: ReviewDTO)
-        : ReviewDTO {
+    fun getSingleReview(isbn: String, reviewId: String): ReviewDTO {
+        val reviews = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
+        val review = reviews.find{ it.id.toString() == reviewId } ?: throw BookstoreExceptions.NotFoundException(reviewId)
+        return mappers.reviewToDto(review)
+
+    }
+
+    fun addReview(isbn: String, reviewDto: ReviewDTO): ReviewDTO {
         val book = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
         val review = mappers.dtoToReview(reviewDto)
         book.add(review)
@@ -100,7 +106,6 @@ class BookstoreService(
         return mappers.reviewToDto(review)
     }
 
-    //9
     fun updateReview(isbn: String, reviewId: String, reviewDto: ReviewDTO) {
 
         val reviews = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
@@ -113,7 +118,6 @@ class BookstoreService(
         reviews[index] = mappers.dtoToReview(reviewDto)
     }
 
-    //10
     fun patchReview(isbn: String, reviewId: String, fields: Map<String, Any>) {
         val reviews = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
         val targetReview = UUID.fromString(reviewId)
@@ -139,7 +143,6 @@ class BookstoreService(
         reviews[index] = mappers.dtoToReview(patchedDto)
     }
 
-    //11
     fun deleteReview(isbn: String, reviewId: String) {
         val bookReviews = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
         val targetReview = UUID.fromString(reviewId)
