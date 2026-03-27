@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component
 @Component
 class ApiTokenRegistry {
     val tokenToApp = mapOf(
-        "catalog-app" to "token-catalog-abc123",
-        "mobile-app" to "token-mobile-def456",
-        "web-app" to "token-web-ghi789"
+        "token-catalog-abc123" to "catalog-app",
+        "token-mobile-def456" to "mobile-app",
+        "token-web-ghi789" to "web-app"
     )
 }
