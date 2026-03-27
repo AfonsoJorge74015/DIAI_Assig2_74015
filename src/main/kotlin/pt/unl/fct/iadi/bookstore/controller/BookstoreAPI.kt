@@ -137,7 +137,7 @@ interface BookstoreAPI {
     ])
     @PatchMapping("/books/{isbn}/reviews/{reviewId}")
     @PreAuthorize("@bookstoreService.checkReviewAuthor(#isbn, #reviewId, authentication.name)")
-    fun patchReview(@PathVariable isbn: String, @PathVariable reviewId: String, @RequestBody fields: Map<String, Any>) : ResponseEntity<Unit>
+    fun patchReview(@PathVariable isbn: String, @PathVariable reviewId: String, @RequestBody fields: Map<String, Any>) : ResponseEntity<ReviewDTO>
 
     //11
     @Operation(summary = "Delete a review", description = "Removes a specific review by its UUID.")

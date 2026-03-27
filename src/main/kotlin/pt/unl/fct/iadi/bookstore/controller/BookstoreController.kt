@@ -81,7 +81,7 @@ class BookstoreController(
         return ResponseEntity.ok(updatedReview)
     }
 
-    override fun patchReview(isbn: String, reviewId: String, fields: Map<String, Any>): ResponseEntity<Unit> {
+    override fun patchReview(isbn: String, reviewId: String, fields: Map<String, Any>): ResponseEntity<ReviewDTO> {
         val patchedReview = service.patchReview(isbn, reviewId, fields)
         return ResponseEntity.ok(patchedReview)
     }
