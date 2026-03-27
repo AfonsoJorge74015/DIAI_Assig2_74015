@@ -124,7 +124,7 @@ interface BookstoreAPI {
     ])
     @PutMapping("/books/{isbn}/reviews/{reviewId}")
     @PreAuthorize("@bookstoreService.checkReviewAuthor(#isbn, #reviewId, authentication.name)")
-    fun updateReview(@PathVariable isbn: String, @PathVariable reviewId: String, @Valid @RequestBody reviewDto: ReviewDTO) : ResponseEntity<Unit>
+    fun updateReview(@PathVariable isbn: String, @PathVariable reviewId: String, @Valid @RequestBody reviewDto: ReviewDTO) : ResponseEntity<ReviewDTO>
 
     //10
     @Operation(summary = "Partially update a review", description = "Updates specific fields (rating or comment) of a review.")

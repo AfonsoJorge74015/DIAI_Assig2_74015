@@ -103,7 +103,7 @@ class BookstoreService(
         return mappers.reviewToDto(review)
     }
 
-    fun updateReview(isbn: String, reviewId: String, reviewDto: ReviewDTO) {
+    fun updateReview(isbn: String, reviewId: String, reviewDto: ReviewDTO): ReviewDTO {
         val currUsername = SecurityContextHolder.getContext().authentication.name
         val reviews = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
         val targetReview = reviewId.toLong()
@@ -113,6 +113,7 @@ class BookstoreService(
             throw BookstoreExceptions.NotFoundException(reviewId)
 
         reviews[index] = mappers.dtoToReview(reviewDto, currUsername, idCounter.incrementAndGet())
+        return mappers.reviewToDto(reviews[index])
     }
 
     fun patchReview(isbn: String, reviewId: String, fields: Map<String, Any>) {
