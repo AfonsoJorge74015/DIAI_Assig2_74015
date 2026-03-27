@@ -1,7 +1,7 @@
 package pt.unl.fct.iadi.bookstore.utils
 
 import org.springframework.stereotype.Component
-import pt.unl.fct.iadi.bookstore.controller.dto.CreateBookRequest
+import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.domain.Book
 import pt.unl.fct.iadi.bookstore.domain.Review
@@ -11,7 +11,7 @@ class Mappers {
 
     //To DTO
     fun bookToDto(book: Book) =
-        CreateBookRequest(book.isbn,
+        BookDTO(book.isbn,
             book.title,
             book.author,
             book.price,
@@ -25,12 +25,12 @@ class Mappers {
 
 
     //To domain
-    fun dtoToBook(createBookRequest: CreateBookRequest) =
-        Book(createBookRequest.isbn,
-            createBookRequest.title,
-            createBookRequest.author,
-            createBookRequest.price,
-            createBookRequest.image)
+    fun dtoToBook(bookDTO: BookDTO) =
+        Book(bookDTO.isbn,
+            bookDTO.title,
+            bookDTO.author,
+            bookDTO.price,
+            bookDTO.image)
 
     fun dtoToReview(reviewDto: ReviewDTO) =
         Review(

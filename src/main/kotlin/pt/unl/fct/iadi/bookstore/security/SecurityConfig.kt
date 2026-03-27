@@ -67,7 +67,6 @@ class SecurityConfig(
             .authorizeHttpRequests { auth ->
                 auth
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/books/**").permitAll()
                     .anyRequest().authenticated()
             }
             .httpBasic {}

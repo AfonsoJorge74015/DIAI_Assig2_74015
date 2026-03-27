@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.Size
 import org.hibernate.validator.constraints.URL
 
-data class CreateBookRequest(
+data class BookDTO(
     @field:NotBlank(message = "ISBN cannot be blank")
     @field:Schema(description = "The unique ISBN-13 of the book", example = "9780134685991")
     val isbn: String,

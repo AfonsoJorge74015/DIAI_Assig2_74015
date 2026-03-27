@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
-import pt.unl.fct.iadi.bookstore.controller.dto.CreateBookRequest
+import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.service.BookstoreService
 
@@ -14,34 +14,34 @@ class BookstoreController(
     : BookstoreAPI {
 
     //1
-    override fun getBooks(): ResponseEntity<List<CreateBookRequest>> {
+    override fun getBooks(): ResponseEntity<List<BookDTO>> {
         val result = service.getBooks()
         return ResponseEntity.ok(result)
     }
 
     //2
-    override fun addBook(createBookRequest: CreateBookRequest): ResponseEntity<Unit> {
-        service.createBook(createBookRequest)
+    override fun addBook(bookDTO: BookDTO): ResponseEntity<Unit> {
+        service.createBook(bookDTO)
         val location = ServletUriComponentsBuilder
             .fromCurrentRequest()
             .path("/{isbn}")
-            .buildAndExpand(createBookRequest.isbn)
+            .buildAndExpand(bookDTO.isbn)
             .toUri()
         return ResponseEntity.created(location).build()
     }
 
     //3
-    override fun getBook(isbn: String): ResponseEntity<CreateBookRequest> {
+    override fun getBook(isbn: String): ResponseEntity<BookDTO> {
         val result = service.getBook(isbn)
         return ResponseEntity.ok(result)
     }
 
     //4
-    override fun updateBook(isbn: String, createBookRequest: CreateBookRequest): ResponseEntity<Unit> {
-        if(isbn != createBookRequest.isbn){
+    override fun updateBook(isbn: String, bookDTO: BookDTO): ResponseEntity<Unit> {
+        if(isbn != bookDTO.isbn){
             throw IllegalArgumentException("Mismatching isbn")
         }
-        service.updateBook(isbn, createBookRequest)
+        service.updateBook(isbn, bookDTO)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 

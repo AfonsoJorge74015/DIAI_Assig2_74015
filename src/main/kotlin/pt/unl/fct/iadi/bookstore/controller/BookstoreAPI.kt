@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.annotation.security.RolesAllowed
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
-import pt.unl.fct.iadi.bookstore.controller.dto.CreateBookRequest
+import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.utils.ErrorResponse
 
@@ -26,7 +27,7 @@ interface BookstoreAPI {
     //1
     @Operation(summary = "Get all books", description = "Returns a list of all books currently in the store.")
     @GetMapping("/books")
-    fun getBooks() : ResponseEntity<List<CreateBookRequest>>
+    fun getBooks() : ResponseEntity<List<BookDTO>>
 
     //2
     @Operation(summary = "Create a new book", description = "Adds a new book to the store. Fails if the ISBN already exists.")
@@ -38,19 +39,19 @@ interface BookstoreAPI {
             content = [Content(schema = Schema(implementation = ErrorResponse::class))])
     ])
     @PostMapping("/books")
-    fun addBook(@RequestBody createBookRequest: CreateBookRequest) : ResponseEntity<Unit>
+    fun addBook(@Valid @RequestBody bookDTO: BookDTO) : ResponseEntity<Unit>
 
     //3
     @Operation(summary = "Get a specific book", description = "Retrieves a book's details by its ISBN.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "Book found", content = [Content(
             mediaType = "application/json",
-            schema = Schema(implementation = CreateBookRequest::class))]),
+            schema = Schema(implementation = BookDTO::class))]),
         ApiResponse(responseCode = "404", description = "Book not found", content = [Content(
             schema = Schema(implementation = ErrorResponse::class))])
     ])
     @GetMapping("/books/{isbn}")
-    fun getBook(@PathVariable isbn : String) : ResponseEntity<CreateBookRequest>
+    fun getBook(@PathVariable isbn : String) : ResponseEntity<BookDTO>
 
     //4
     @Operation(summary = "Replace or create a book", description = "Fully replaces a book's info. If  doesn't exist, creates the book.")
@@ -61,7 +62,7 @@ interface BookstoreAPI {
             schema = Schema(implementation = ErrorResponse::class))])
     ])
     @PutMapping("/books/{isbn}")
-    fun updateBook(@PathVariable isbn: String, @RequestBody createBookRequest: CreateBookRequest) : ResponseEntity<Unit>
+    fun updateBook(@PathVariable isbn: String, @Valid @RequestBody bookDTO: BookDTO) : ResponseEntity<Unit>
 
     //5
     @Operation(summary = "Partially update a book", description = "Updates only the provided fields of a book.")
@@ -106,7 +107,7 @@ interface BookstoreAPI {
             schema = Schema(implementation = ErrorResponse::class))])
     ])
     @PostMapping("/books/{isbn}/reviews")
-    fun addReview(@PathVariable isbn: String, @RequestBody reviewDto: ReviewDTO) : ResponseEntity<Unit>
+    fun addReview(@PathVariable isbn: String, @Valid @RequestBody reviewDto: ReviewDTO) : ResponseEntity<Unit>
 
     //9
     @Operation(summary = "Replace a review", description = "Fully replaces a review's content. Requires the unique review UUID.")
@@ -119,7 +120,7 @@ interface BookstoreAPI {
     ])
     @PutMapping("/books/{isbn}/reviews/{reviewId}")
     @PreAuthorize("@bookstoreService.checkReviewAuthor(#isbn, #reviewId, authentication.name)")
-    fun updateReview(@PathVariable isbn: String, @PathVariable reviewId: String, @RequestBody reviewDto: ReviewDTO) : ResponseEntity<Unit>
+    fun updateReview(@PathVariable isbn: String, @PathVariable reviewId: String, @Valid @RequestBody reviewDto: ReviewDTO) : ResponseEntity<Unit>
 
     //10
     @Operation(summary = "Partially update a review", description = "Updates specific fields (rating or comment) of a review.")

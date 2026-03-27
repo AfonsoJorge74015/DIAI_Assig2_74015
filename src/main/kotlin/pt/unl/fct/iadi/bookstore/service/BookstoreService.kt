@@ -1,7 +1,7 @@
 package pt.unl.fct.iadi.bookstore.service
 
 import org.springframework.stereotype.Service
-import pt.unl.fct.iadi.bookstore.controller.dto.CreateBookRequest
+import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.domain.Book
 import pt.unl.fct.iadi.bookstore.domain.Review
@@ -22,32 +22,32 @@ class BookstoreService(
     private val reviews = ConcurrentHashMap<String, MutableList<Review>>()
 
     //1
-    fun getBooks() : List<CreateBookRequest> {
+    fun getBooks() : List<BookDTO> {
         return books.values.toList()
             .map { mappers.bookToDto(it) }
     }
 
     //2
-    fun createBook(createBookRequest: CreateBookRequest) {
-        if(books.containsKey(createBookRequest.isbn)){
-            throw BookstoreExceptions.AlreadyExistsException(createBookRequest.isbn)
+    fun createBook(bookDTO: BookDTO) {
+        if(books.containsKey(bookDTO.isbn)){
+            throw BookstoreExceptions.AlreadyExistsException(bookDTO.isbn)
         }
-        books[createBookRequest.isbn] = mappers.dtoToBook(createBookRequest)
-        reviews[createBookRequest.isbn] = mutableListOf()
+        books[bookDTO.isbn] = mappers.dtoToBook(bookDTO)
+        reviews[bookDTO.isbn] = mutableListOf()
     }
 
     //3
-    fun getBook(isbn: String): CreateBookRequest {
+    fun getBook(isbn: String): BookDTO {
         val bookDto = books[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
         return mappers.bookToDto(bookDto)
     }
 
     //4
-    fun updateBook(isbn: String, createBookRequest: CreateBookRequest) {
+    fun updateBook(isbn: String, bookDTO: BookDTO) {
         if(books.containsKey(isbn)){
-            books[isbn] = mappers.dtoToBook(createBookRequest)
+            books[isbn] = mappers.dtoToBook(bookDTO)
         } else {
-            createBook(createBookRequest)
+            createBook(bookDTO)
         }
     }
 
