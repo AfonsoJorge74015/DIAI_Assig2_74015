@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import jakarta.validation.Validator
 import org.springframework.security.core.context.SecurityContextHolder
 import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
+import pt.unl.fct.iadi.bookstore.controller.dto.PatchReviewDTO
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.domain.Book
 import pt.unl.fct.iadi.bookstore.domain.Review
@@ -116,31 +117,26 @@ class BookstoreService(
         return mappers.reviewToDto(reviews[index])
     }
 
-    fun patchReview(isbn: String, reviewId: String, fields: Map<String, Any>): ReviewDTO {
+    fun patchReview(isbn: String, reviewId: String, patchDto: PatchReviewDTO): ReviewDTO {
         val currUsername = SecurityContextHolder.getContext().authentication.name
-        val reviews = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
+        val bookReviews = reviews[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
         val targetReview = reviewId.toLong()
-        val index = reviews.indexOfFirst { it.id == targetReview }
+        val index = bookReviews.indexOfFirst { it.id == targetReview }
 
         if(index == -1)
             throw BookstoreExceptions.NotFoundException(reviewId)
 
-        val toPatch = reviews[index]
+        val toPatch = bookReviews[index]
 
         val patched = toPatch.copy(
-            author = fields["author"] as? String ?: toPatch.author,
-            rating = fields["rating"]?.toString()?.toIntOrNull() ?: toPatch.rating,
-            comment = fields["comment"] as? String ?: toPatch.comment)
+            rating = patchDto.rating ?: toPatch.rating,
+            comment = patchDto.comment ?: toPatch.comment
+        )
 
         val patchedDto = mappers.reviewToDto(patched)
-        val check = validator.validate(patchedDto)
 
-        if (check.isNotEmpty()) {
-            throw ConstraintViolationException(check)
-        }
-
-        reviews[index] = mappers.dtoToReview(patchedDto, currUsername, idCounter.incrementAndGet())
-        return mappers.reviewToDto(reviews[index])
+        bookReviews[index] = mappers.dtoToReview(patchedDto, currUsername, idCounter.incrementAndGet())
+        return mappers.reviewToDto(bookReviews[index])
     }
 
     fun deleteReview(isbn: String, reviewId: String) {

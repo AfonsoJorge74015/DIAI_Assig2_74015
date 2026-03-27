@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
+import pt.unl.fct.iadi.bookstore.controller.dto.PatchReviewDTO
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.domain.Book
 import pt.unl.fct.iadi.bookstore.service.BookstoreService
@@ -81,8 +82,8 @@ class BookstoreController(
         return ResponseEntity.ok(updatedReview)
     }
 
-    override fun patchReview(isbn: String, reviewId: String, fields: Map<String, Any>): ResponseEntity<ReviewDTO> {
-        val patchedReview = service.patchReview(isbn, reviewId, fields)
+    override fun patchReview(isbn: String, reviewId: String, patchDto: PatchReviewDTO): ResponseEntity<ReviewDTO> {
+        val patchedReview = service.patchReview(isbn, reviewId, patchDto)
         return ResponseEntity.ok(patchedReview)
     }
 

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
+import pt.unl.fct.iadi.bookstore.controller.dto.PatchReviewDTO
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.domain.Book
 import pt.unl.fct.iadi.bookstore.utils.ErrorResponse
@@ -137,7 +138,7 @@ interface BookstoreAPI {
     ])
     @PatchMapping("/books/{isbn}/reviews/{reviewId}")
     @PreAuthorize("@bookstoreService.checkReviewAuthor(#isbn, #reviewId, authentication.name)")
-    fun patchReview(@PathVariable isbn: String, @PathVariable reviewId: String, @RequestBody fields: Map<String, Any>) : ResponseEntity<ReviewDTO>
+    fun patchReview(@PathVariable isbn: String, @PathVariable reviewId: String, @Valid @RequestBody patchDto: PatchReviewDTO) : ResponseEntity<ReviewDTO>
 
     //11
     @Operation(summary = "Delete a review", description = "Removes a specific review by its UUID.")
