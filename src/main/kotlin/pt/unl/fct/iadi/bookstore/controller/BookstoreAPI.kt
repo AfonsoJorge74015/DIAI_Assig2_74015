@@ -142,5 +142,6 @@ interface BookstoreAPI {
             schema = Schema(implementation = ErrorResponse::class))])
     ])
     @DeleteMapping("/books/{isbn}/reviews/{reviewId}")
+    @PreAuthorize("hasRole('ADMIN') or @bookstoreService.checkReviewAuthor(#isbn, #reviewId, authentication.name)")
     fun deleteReview(@PathVariable isbn: String, @PathVariable reviewId: String): ResponseEntity<Unit>
 }

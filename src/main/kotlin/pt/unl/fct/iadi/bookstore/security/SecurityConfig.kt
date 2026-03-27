@@ -72,11 +72,18 @@ class SecurityConfig(
             }
             .httpBasic {}
             .exceptionHandling { exceptions ->
+                exceptions.authenticationEntryPoint { _, response, _
+                    ->
+                    response.status = 401
+                    response.contentType = "application/json"
+                    response.writer.write("""{"error":"UNAUTHORIZED","message":"Missing or invalid X-Api-Token"}""")
+                }
+
                 exceptions.accessDeniedHandler { _, response, _
                     ->
                     response.status = 403
                     response.contentType = "application/json"
-                    response.writer.write("""{"error":"UNAUTHORIZED","message":"Missing or invalid X-Api-Token"}""")
+                    response.writer.write("""{"error":"FORBIDDEN","message":"You don't have permission to access this resource"}""")
                 }
             }
         return http.build()
