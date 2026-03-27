@@ -8,6 +8,7 @@ import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
 import pt.unl.fct.iadi.bookstore.domain.Book
 import pt.unl.fct.iadi.bookstore.service.BookstoreService
+import pt.unl.fct.iadi.bookstore.service.exceptions.BookstoreExceptions
 
 @RestController
 class BookstoreController(
@@ -38,12 +39,14 @@ class BookstoreController(
     }
 
     //4
-    override fun updateBook(isbn: String, bookDTO: BookDTO): ResponseEntity<BookDTO> {
-        if(isbn != bookDTO.isbn){
-            throw IllegalArgumentException("Mismatching isbn")
+    override fun updateBook(isbn: String, bookDTO: BookDTO): ResponseEntity<*> {
+        return try {
+            service.getBook(isbn)
+            service.updateBook(isbn, bookDTO)
+            ResponseEntity.ok(bookDTO)
+        } catch (e: BookstoreExceptions.NotFoundException) {
+            addBook(bookDTO)
         }
-        val updated = service.updateBook(isbn, bookDTO)
-        return ResponseEntity.ok(updated)
     }
 
     //5
