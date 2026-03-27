@@ -113,7 +113,7 @@ class BookstoreService(
         if(index == -1)
             throw BookstoreExceptions.NotFoundException(reviewId)
 
-        reviews[index] = mappers.dtoToReview(reviewDto, currUsername, idCounter.incrementAndGet())
+        reviews[index] = mappers.dtoToReview(reviewDto, currUsername, targetReview)
         return mappers.reviewToDto(reviews[index])
     }
 
@@ -135,7 +135,7 @@ class BookstoreService(
 
         val patchedDto = mappers.reviewToDto(patched)
 
-        bookReviews[index] = mappers.dtoToReview(patchedDto, currUsername, idCounter.incrementAndGet())
+        bookReviews[index] = mappers.dtoToReview(patchedDto, currUsername, targetReview)
         return mappers.reviewToDto(bookReviews[index])
     }
 
