@@ -18,7 +18,7 @@ class ApiTokenFilter(
         filterChain: FilterChain
     ) {
         val token = request.getHeader("X-Api-Token")
-        val appName = registry.tokenToApp[token] ?: "unknown"
+        val appName = registry.tokenToApp[token]
 
         if (appName == "unknown") {
             response.status = HttpServletResponse.SC_UNAUTHORIZED
