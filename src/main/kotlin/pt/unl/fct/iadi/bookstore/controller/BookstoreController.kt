@@ -42,7 +42,7 @@ class BookstoreController(
             throw IllegalArgumentException("Mismatching isbn")
         }
         val updated = service.updateBook(isbn, bookDTO)
-        return ResponseEntity.status(HttpStatus.OK).build()
+        return ResponseEntity.ok(updated)
     }
 
     //5
