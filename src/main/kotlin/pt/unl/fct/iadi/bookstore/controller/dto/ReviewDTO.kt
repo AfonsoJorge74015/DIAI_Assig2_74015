@@ -24,7 +24,6 @@ data class ReviewDTO(
         minimum = "1", maximum = "5", example = "5")
     val rating: Int,
 
-    @field:NotNull
     @field:Size(min = 0, max = 500, message = "Comment must be between 0 and 500",)
     @field:Schema(description = "Optional text comment",
         maxLength = 500, example = "Excellent read!")
