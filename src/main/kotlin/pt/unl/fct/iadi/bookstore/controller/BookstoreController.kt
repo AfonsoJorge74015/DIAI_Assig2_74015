@@ -50,9 +50,9 @@ class BookstoreController(
     }
 
     //5
-    override fun patchBook(isbn: String, fields: Map<String, Any>): ResponseEntity<Unit> {
-        service.patchBook(isbn, fields)
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    override fun patchBook(isbn: String, fields: Map<String, Any>): ResponseEntity<BookDTO> {
+        val patched = service.patchBook(isbn, fields)
+        return ResponseEntity.ok(patched)
     }
 
     //6

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import pt.unl.fct.iadi.bookstore.controller.dto.BookDTO
 import pt.unl.fct.iadi.bookstore.controller.dto.ReviewDTO
+import pt.unl.fct.iadi.bookstore.domain.Book
 import pt.unl.fct.iadi.bookstore.utils.ErrorResponse
 
 @Tag(name = "Bookstore", description = "Operations related to books and reviews")
@@ -74,7 +75,7 @@ interface BookstoreAPI {
             schema = Schema(implementation = ErrorResponse::class))])
     ])
     @PatchMapping("/books/{isbn}")
-    fun patchBook(@PathVariable isbn: String, @RequestBody fields: Map<String, Any>) : ResponseEntity<Unit>
+    fun patchBook(@PathVariable isbn: String, @RequestBody fields: Map<String, Any>) : ResponseEntity<BookDTO>
 
     //6
     @Operation(summary = "Delete a book", description = "Removes a book and all its associated reviews from the store.")

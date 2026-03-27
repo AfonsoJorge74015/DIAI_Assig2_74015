@@ -53,7 +53,7 @@ class BookstoreService(
     }
 
     //5
-    fun patchBook(isbn: String, fields: Map<String, Any>) {
+    fun patchBook(isbn: String, fields: Map<String, Any>): BookDTO {
         val toPatch = books[isbn] ?: throw BookstoreExceptions.NotFoundException(isbn)
 
         val patched = toPatch.copy(
@@ -72,6 +72,7 @@ class BookstoreService(
         )
 
         books[isbn] = validated
+        return mappers.bookToDto(validated)
     }
 
     //6
